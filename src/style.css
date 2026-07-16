@@ -15,3 +15,122 @@ html, body {
 #app {
   background: transparent;
 }
+
+/* ── Card ── */
+.card {
+  position: relative;
+  width: 300px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, rgba(12,13,18,0.92), rgba(10,11,16,0.92));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: border-color 200ms, background-color 200ms;
+  -webkit-app-region: no-drag;
+  overflow: hidden;
+}
+.card:hover { border-color: rgba(255,255,255,0.25); }
+.card--expired { opacity: 0.4; filter: grayscale(60%); }
+.card--confirm { background: rgba(20,0,0,0.88); border-color: rgba(255,0,0,0.15); }
+
+.card__corner {
+  position: absolute;
+  width: 8px; height: 8px;
+  border: 0 solid rgba(255,255,255,0.18);
+}
+.card__corner--tl { top: 4px; left: 4px; border-top-width: 1px; border-left-width: 1px; }
+.card__corner--tr { top: 4px; right: 4px; border-top-width: 1px; border-right-width: 1px; }
+.card__corner--bl { bottom: 4px; left: 4px; border-bottom-width: 1px; border-left-width: 1px; }
+.card__corner--br { bottom: 4px; right: 4px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.card__accent {
+  position: absolute;
+  left: 0; top: 8px; bottom: 8px; width: 2px;
+  border-radius: 1px;
+  transition: box-shadow 200ms;
+}
+
+.card__content { position: relative; z-index: 1; margin-left: 6px; }
+
+.card__text {
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__digits {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  transition: text-shadow 300ms;
+}
+
+.card__progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.card__progress-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.card__progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 300ms;
+}
+.card__progress-dot {
+  position: absolute;
+  top: 0;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  animation: dotSlide 3s ease-in-out infinite;
+}
+@keyframes dotSlide {
+  0%, 100% { left: 0; }
+  50% { left: calc(100% - 4px); }
+}
+.card__progress-label {
+  color: rgba(255,255,255,0.45);
+  font-size: 10px;
+  min-width: 30px;
+  text-align: right;
+}
+
+.card__date {
+  color: rgba(255,255,255,0.45);
+  font-size: 11px;
+}
+
+.card__confirm {
+  position: relative; z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.card__confirm-text { color: rgba(255,255,255,0.7); font-size: 14px; }
+.card__confirm-actions { display: flex; gap: 12px; }
+.card__confirm-btn {
+  padding: 4px 18px;
+  border-radius: 6px; border: none;
+  font-size: 13px; cursor: pointer;
+  transition: opacity 150ms;
+}
+.card__confirm-btn:hover { opacity: 0.8; }
+.card__confirm-btn--cancel { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+.card__confirm-btn--delete { background: rgba(255,60,60,0.2); color: #ff4d4d; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
