@@ -49,13 +49,25 @@ fn save_window_position(
 }
 
 #[tauri::command]
-fn set_autostart(enabled: bool) -> Result<(), String> {
-    autostart_manager::set_autostart(enabled)
+fn set_autostart(state: State<'_, Mutex<AppState>>, enabled: bool) -> Result<(), String> {
+    autostart_manager::set_autostart(enabled)?;
+    let app = state.lock().map_err(|e| e.to_string())?;
+    app.store
+        .update_settings(|s| s.autostart = enabled)
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn get_autostart() -> Result<bool, String> {
     autostart_manager::get_autostart()
+}
+
+#[tauri::command]
+fn complete_onboarding(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
+    let app = state.lock().map_err(|e| e.to_string())?;
+    app.store
+        .update_settings(|s| s.onboarding_complete = true)
+        .map_err(|e| e.to_string())
 }
 
 pub fn run() {
@@ -72,7 +84,7 @@ pub fn run() {
             let app_state = state.lock().unwrap();
             let pos = &app_state.store.get_all().settings.window_position;
             window_utils::validate_and_position(&window, pos.x, pos.y);
-            tray_manager::create_tray(&app.handle()).expect("Failed to create system tray");
+            tray_manager::create_tray(app.handle()).expect("Failed to create system tray");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -82,6 +94,7 @@ pub fn run() {
             save_window_position,
             set_autostart,
             get_autostart,
+            complete_onboarding,
         ])
         .run(tauri::generate_context!())
         .expect("error while running DeskCountdown");

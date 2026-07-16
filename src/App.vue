@@ -180,9 +180,13 @@ async function onConfirmDel(id: string) {
 // ── Onboarding ──
 async function onOnboardEnable() {
   await invoke('set_autostart', { enabled: true })
+  await invoke('complete_onboarding')
   showOnboarding.value = false
 }
-function onOnboardDismiss() { showOnboarding.value = false }
+async function onOnboardDismiss() {
+  await invoke('complete_onboarding')
+  showOnboarding.value = false
+}
 
 // ── Window resize ──
 async function resizeWindow() {
