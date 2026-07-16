@@ -26,6 +26,7 @@
         class="card__digits"
         :style="{
           backgroundImage: gradientCSS,
+          backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: vm.isExpired ? undefined : 'transparent',
           color: vm.isExpired ? 'rgba(255,255,255,0.3)' : undefined,

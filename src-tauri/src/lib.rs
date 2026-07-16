@@ -81,7 +81,7 @@ pub fn run() {
                 .get_webview_window("main")
                 .expect("main window not found");
             let state = app.state::<Mutex<AppState>>();
-            let app_state = state.lock().unwrap();
+            let app_state = state.lock().unwrap_or_else(|e| e.into_inner());
             let pos = &app_state.store.get_all().settings.window_position;
             window_utils::validate_and_position(&window, pos.x, pos.y);
             tray_manager::create_tray(app.handle()).expect("Failed to create system tray");

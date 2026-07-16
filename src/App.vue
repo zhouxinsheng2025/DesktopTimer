@@ -40,11 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window'
 import { listen } from '@tauri-apps/api/event'
-import { nextTick } from 'vue'
 
 import type { Countdown, EditorMode } from './types'
 import { useCountdownEngine } from './composables/useCountdownEngine'

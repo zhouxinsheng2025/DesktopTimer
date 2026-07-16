@@ -67,6 +67,7 @@
 import { reactive, ref, computed, watch } from 'vue'
 import type { Countdown, EditorMode } from '../types'
 import { GRADIENT_PRESETS } from '../types'
+import { formatRemaining } from '../utils/format'
 
 const props = defineProps<{ mode: EditorMode; editData: Countdown | null }>()
 
@@ -85,10 +86,17 @@ const form = reactive({
   gradient: 'neon-cyan-blue',
 })
 
+function toLocalDate(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function getDefaultDate(): string {
   const d = new Date()
   d.setDate(d.getDate() + 7)
-  return d.toISOString().split('T')[0]
+  return toLocalDate(d)
 }
 
 function validate() { titleError.value = form.title.trim().length === 0 }
@@ -96,7 +104,7 @@ function validate() { titleError.value = form.title.trim().length === 0 }
 function addDays(n: number) {
   const d = new Date()
   d.setDate(d.getDate() + n)
-  form.date = d.toISOString().split('T')[0]
+  form.date = toLocalDate(d)
 }
 
 const previewText = computed(() => {
@@ -105,23 +113,7 @@ const previewText = computed(() => {
   const s = form.suffix || ''
   const target = new Date(form.date + 'T' + form.time)
   const now = new Date()
-  let digits: string
-  if (target <= now) {
-    digits = '___天 __时 __分 __秒'
-  } else {
-    let diff = target.getTime() - now.getTime()
-    const ts = Math.floor(diff / 1000)
-    const d = Math.floor(ts / 86400)
-    const h = Math.floor((ts % 86400) / 3600)
-    const m = Math.floor((ts % 3600) / 60)
-    const ss = ts % 60
-    const pad = (n: number) => String(n).padStart(2, '0')
-    digits = d >= 1
-      ? `${d}天 ${pad(h)}时 ${pad(m)}分 ${pad(ss)}秒`
-      : h >= 1
-        ? `${pad(h)}时 ${pad(m)}分 ${pad(ss)}秒`
-        : `${pad(m)}分 ${pad(ss)}秒`
-  }
+  const digits = target <= now ? '___天 __时 __分 __秒' : formatRemaining(now, target)
   return `${p} ${t} ${s} ${digits}`.trim()
 })
 
