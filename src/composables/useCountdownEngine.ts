@@ -103,7 +103,6 @@ export function useCountdownEngine() {
     expiredCards,
     separatorVisible,
     cardViewModels,
-    now,
     loadFromBackend,
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="ctxmenu" :style="{ left: x + 'px', top: y + 'px' }">
+    <div v-if="visible" class="ctxmenu" ref="menuEl" :style="{ left: adjX + 'px', top: adjY + 'px' }">
       <template v-for="item in items" :key="item.action">
         <div v-if="item.separator" class="ctxmenu__sep"></div>
         <div
@@ -18,13 +18,27 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import type { MenuItem } from '../composables/useContextMenu'
 
-defineProps<{
+const props = defineProps<{
   visible: boolean; x: number; y: number; items: MenuItem[]
 }>()
 
 defineEmits<{ select: [action: string]; close: [] }>()
+
+const menuEl = ref<HTMLElement | null>(null)
+const menuW = ref(170)
+const menuH = ref(200)
+
+const adjX = computed(() => {
+  const w = Math.max(menuW.value, 160)
+  return (props.x + w > window.innerWidth) ? props.x - w : props.x
+})
+const adjY = computed(() => {
+  const h = Math.max(menuH.value, 120)
+  return (props.y + h > window.innerHeight) ? props.y - h : props.y
+})
 </script>
 
 <style>

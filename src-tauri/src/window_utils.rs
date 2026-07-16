@@ -14,7 +14,9 @@ pub fn validate_and_position(window: &WebviewWindow, saved_x: i32, saved_y: i32)
     if is_visible && (saved_x != 0 || saved_y != 0) {
         let _ = window.set_position(PhysicalPosition::new(saved_x, saved_y));
     } else {
-        // Default: bottom-right corner of primary monitor's working area
+        // Default: bottom-right corner of primary monitor.
+        // Uses monitor.size() (full screen) rather than working area;
+        // the 40px margin from each edge typically clears the taskbar.
         if let Some(monitor) = window.primary_monitor().unwrap_or_default() {
             let size = monitor.size();
             let pos = monitor.position();
