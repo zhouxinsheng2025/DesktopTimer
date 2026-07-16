@@ -10,6 +10,8 @@ extern "system" {
         lp_name: *const u16,
     ) -> *mut std::ffi::c_void;
 
+    fn CloseHandle(handle: *mut std::ffi::c_void) -> i32;
+
     fn GetLastError() -> u32;
 
     fn FindWindowW(
@@ -36,6 +38,7 @@ fn main() {
         let _handle = CreateMutexW(std::ptr::null(), 1, name.as_ptr());
 
         if GetLastError() == ERROR_ALREADY_EXISTS {
+            CloseHandle(_handle);
             let title = to_wide("桌面倒计时");
             let hwnd = FindWindowW(std::ptr::null(), title.as_ptr());
             if !hwnd.is_null() {

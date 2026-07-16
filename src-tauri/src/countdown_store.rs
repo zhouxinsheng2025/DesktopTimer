@@ -103,20 +103,26 @@ impl CountdownStore {
         })
     }
 
+    fn lock(&self) -> std::sync::MutexGuard<'_, AppData> {
+        self.data.lock().unwrap_or_else(|e| e.into_inner())
+    }
+
     fn save(&self) -> Result<(), StoreError> {
-        let data = self.data.lock().unwrap();
+        let data = self.lock();
         let json = serde_json::to_string_pretty(&*data)?;
-        fs::write(&self.path, json)?;
+        let tmp = self.path.with_extension("json.tmp");
+        fs::write(&tmp, &json)?;
+        fs::rename(&tmp, &self.path)?;
         Ok(())
     }
 
     pub fn get_all(&self) -> AppData {
-        self.data.lock().unwrap().clone()
+        self.lock().clone()
     }
 
     pub fn save_countdown(&self, countdown: Countdown) -> Result<(), StoreError> {
         {
-            let mut data = self.data.lock().unwrap();
+            let mut data = self.lock();
             if let Some(existing) = data.countdowns.iter_mut().find(|c| c.id == countdown.id) {
                 *existing = countdown;
             } else {
@@ -128,7 +134,7 @@ impl CountdownStore {
 
     pub fn delete_countdown(&self, id: &str) -> Result<(), StoreError> {
         {
-            let mut data = self.data.lock().unwrap();
+            let mut data = self.lock();
             data.countdowns.retain(|c| c.id != id);
         }
         self.save()
@@ -136,7 +142,7 @@ impl CountdownStore {
 
     pub fn update_settings(&self, f: impl FnOnce(&mut Settings)) -> Result<(), StoreError> {
         {
-            let mut data = self.data.lock().unwrap();
+            let mut data = self.lock();
             f(&mut data.settings);
         }
         self.save()

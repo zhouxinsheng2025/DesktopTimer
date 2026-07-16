@@ -24,25 +24,12 @@ export function formatRemaining(now: Date, target: Date): string {
 }
 
 export function formatExpired(now: Date, target: Date): string {
-  const diffMs = now.getTime() - target.getTime()
-  const hours = diffMs / (1000 * 60 * 60)
-
-  if (hours < 24) return '今日到期'
-
-  const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate())
   const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const days = Math.floor((nowDay.getTime() - targetDay.getTime()) / 86400000)
-  return `已过期 ${days} 天`
-}
+  const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate())
+  const dayDiff = Math.floor((nowDay.getTime() - targetDay.getTime()) / 86400000)
 
-export function formatTargetDate(iso: string): string {
-  const d = parseLocalISO(iso)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  const h = String(d.getHours()).padStart(2, '0')
-  const min = String(d.getMinutes()).padStart(2, '0')
-  return `${y}-${m}-${day} ${h}:${min}`
+  if (dayDiff < 1) return '今日到期'
+  return `已过期 ${dayDiff} 天`
 }
 
 export function computeProgress(createdAt: string, targetDate: string, now: Date): number {

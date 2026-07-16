@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window'
 import { listen } from '@tauri-apps/api/event'
@@ -122,7 +122,7 @@ function onMenuSelect(action: string) {
     case 'copy': {
       const card = countdowns.value.find(c => c.id === menuTargetId)
       if (card) {
-        const copy: Countdown = { ...JSON.parse(JSON.stringify(card)), id: '', title: card.title + ' 副本' }
+        const copy: Countdown = { ...structuredClone(card), id: '', title: card.title + ' 副本' }
         openEditor('create', copy)
       }
       break
@@ -199,15 +199,20 @@ async function resizeWindow() {
 }
 
 // ── Events ──
-listen<boolean>('particles-toggled', (e) => { particlesEnabled.value = e.payload })
+const unlistenParticles = listen<boolean>('particles-toggled', (e) => { particlesEnabled.value = e.payload })
 
 // ── Keyboard ──
-document.addEventListener('keydown', (e) => {
+function onKeyDown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     if (menuVisible.value) closeMenu()
     else if (confirmingId.value) confirmingId.value = null
     else if (editorVisible.value) onEditorCancel()
   }
+}
+document.addEventListener('keydown', onKeyDown)
+onUnmounted(async () => {
+  document.removeEventListener('keydown', onKeyDown)
+  ;(await unlistenParticles)()
 })
 
 // ── Init ──

@@ -88,7 +88,7 @@ export function useCountdownEngine() {
   }
 
   onMounted(() => {
-    loadFromBackend().then(() => startTimer())
+    startTimer()
   })
 
   onUnmounted(() => {

@@ -20,6 +20,14 @@ pub fn create_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
         .item(&quit)
         .build()?;
 
+    // Initialize checkmark states
+    let state = app.state::<Mutex<crate::AppState>>();
+    if let Ok(app_state) = state.lock() {
+        let settings = app_state.store.get_all().settings;
+        let _ = particles.set_checked(settings.particles_enabled);
+        let _ = autostart.set_checked(settings.autostart);
+    }
+
     let _tray = TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().clone())
         .tooltip("桌面倒计时 - 左键切换显示")
