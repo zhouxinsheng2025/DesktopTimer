@@ -45,8 +45,5 @@
         "installMode": "both"
       }
     }
-  },
-  "plugins": {
-    "dialog": {}
   }
 }
