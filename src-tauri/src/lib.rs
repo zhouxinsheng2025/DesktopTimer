@@ -1,5 +1,6 @@
 mod autostart_manager;
 mod countdown_store;
+mod tray_manager;
 mod window_utils;
 
 use countdown_store::{Countdown, CountdownStore};
@@ -71,6 +72,7 @@ pub fn run() {
             let app_state = state.lock().unwrap();
             let pos = &app_state.store.get_all().settings.window_position;
             window_utils::validate_and_position(&window, pos.x, pos.y);
+            tray_manager::create_tray(&app.handle()).expect("Failed to create system tray");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
